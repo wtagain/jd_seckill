@@ -44,6 +44,16 @@ func startSeckill(cmd *cobra.Command, args []string)  {
 			jdTime,_:=GetJdTime()
 			buyDate:=common.Config.MustValue("config","buy_time","")
 			loc, _ := time.LoadLocation("Local")
+
+			// 2021-01-01 09:59:59
+			if(time.Now().Hour() >= 10 && time.Now().Minute() >= 10){
+				nextDay := time.Now().AddDate(0, 0, 1)
+				buyDate = time.Date(nextDay.Year(), nextDay.Month(), nextDay.Day(), 9, 59, 59, 0, loc).Format("2006-01-02 15:04:05")
+			}else if(time.Now().Hour() < 10){
+				currentDay := time.Now()
+				buyDate = time.Date(currentDay.Year(), currentDay.Month(), currentDay.Day(), 9, 59, 59, 0, loc).Format("2006-01-02 15:04:05")
+			}
+
 			t,_:=time.ParseInLocation("2006-01-02 15:04:05",buyDate,loc)
 			buyTime:=t.UnixNano()/1e6
 			diffTime:=nowLocalTime-jdTime
